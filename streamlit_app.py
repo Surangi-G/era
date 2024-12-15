@@ -10,12 +10,15 @@ from sklearn.impute import IterativeImputer
 
 import streamlit as st
 
-# Full-Width and Center-Aligned Content
+import streamlit as st
+
+# Display Auckland Council Logo (center-aligned) and Titles
 st.markdown(
     """
     <style>
         .center-content {
             text-align: center;
+            margin-top: 10px;
         }
         h1 {
             color: #2c7fb8;
@@ -31,17 +34,18 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Center-Aligned Logo and Headings
+# Use st.image to display the logo with HTML alignment
+st.markdown('<div class="center-content">', unsafe_allow_html=True)
+st.image("aucklandcouncil_logo.PNG", width=150)
 st.markdown(
     """
-    <div class="center-content">
-        <img src="aucklandcouncil_logo.PNG" alt="Auckland Council Logo" width="150">
-        <h1>ECO SOIL INSIGHTS AKL</h1>
-        <h3>Data Cleansing App</h3>
-    </div>
+    <h1>ECO SOIL INSIGHTS AKL</h1>
+    <h3>Data Cleansing App</h3>
     """,
     unsafe_allow_html=True
 )
+st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # Access Control
