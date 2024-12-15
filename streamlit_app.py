@@ -8,22 +8,41 @@ from scipy.stats import ks_2samp
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 
-st.markdown("""
-    <style>
-        .st-emotion-cache-xhkv9f {
-width: 100% !important;
-}
-    </style>
-    """, unsafe_allow_html=True)
+# Center-Aligned Title and Subtitle with Custom Styling
 st.markdown(
-        """
-        <div style="text-align: center;">
-            <h1 style="color: #2c7fb8; font-size: 36px;">ECO SOIL INSIGHTS</h1>
-            <h3 style="font-size: 24px; margin-top: -10px;">Data Cleansing App</h3>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    """
+    <style>
+        /* Full-width content area adjustment */
+        .block-container {
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+        }
+
+        /* Centered heading styles */
+        h1, h3 {
+            text-align: center;
+        }
+        h1 {
+            color: #2c7fb8;
+            font-size: 36px;
+        }
+        h3 {
+            font-size: 24px;
+            margin-top: -10px;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Display the headings
+st.markdown(
+    """
+    <h1>ECO SOIL INSIGHTS</h1>
+    <h3>Data Cleansing App</h3>
+    """,
+    unsafe_allow_html=True
+)
 
 
 
