@@ -214,6 +214,10 @@ if uploaded_file:
          # Reattach categorical columns
         df_final = pd.concat([df[categorical_columns + non_predictive_columns].reset_index(drop=True), df_imputed], axis=1)
 
+        # Reorder columns
+        columns_order = ['Site No.1', 'Site Num', 'Sample Count', 'Year', 'Period']
+        remaining_columns = [col for col in df_final.columns if col not in columns_order]
+        df_final = df_final[columns_order + remaining_columns]
         
         st.write("Step 7: Missing values imputed using Iterative Imputer.")
         st.write("### Dataset After Imputation")
