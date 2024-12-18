@@ -74,9 +74,7 @@ if uploaded_file:
         # Display basic dataset information
         st.header("Dataset Information")
         st.write("**Shape of the dataset:**", df.shape)
-        st.write("**Missing Values in Each Column:**")
-        st.write(df.isnull().sum())
-
+        
         # Detailed dataset information: columns, data types, and count of non-null values
         st.write("**Detailed Dataset Information:**")
         dataset_info = pd.DataFrame({
@@ -87,6 +85,32 @@ if uploaded_file:
         }).reset_index(drop=True)
 
         st.write(dataset_info)
+
+        # Data Type Conversion Section
+        st.header("Data Type Conversion")
+
+        # Check if 'Site Num' and 'Year' columns are present in the dataset
+        columns_to_convert = ['Site Num', 'Year']
+        present_columns = [col for col in columns_to_convert if col in df.columns]
+
+        if present_columns:
+            for col in present_columns:
+                df[col] = df[col].astype('category')
+                st.write(f"Converted `{col}` to categorical data type.")
+    
+            # Display updated dataset information after conversion
+            st.write("### Updated Dataset Information After Data Type Conversion")
+            updated_dataset_info = pd.DataFrame({
+                "Column Name": df.columns,
+                "Data Type": df.dtypes,
+                "Non-Null Count": df.notnull().sum(),
+                "Missing Count": df.isnull().sum()
+            }).reset_index(drop=True)
+
+            st.write(updated_dataset_info)
+        else:
+            st.warning("Columns 'Site Num' and 'Year' are not present in the dataset. Skipping data type conversion.")
+       
 
         # Validation: Check for critical columns
         critical_columns = ['pH', 'TC %', 'TN %', 'Olsen P', 'AMN', 'BD']
