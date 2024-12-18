@@ -1,5 +1,4 @@
 import streamlit as st
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,10 +6,6 @@ import seaborn as sns
 from scipy.stats import ks_2samp
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
-
-import streamlit as st
-
-import streamlit as st
 
 # Display Auckland Council Logo (center-aligned) and Titles
 st.markdown(
@@ -45,8 +40,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 st.markdown('</div>', unsafe_allow_html=True)
-
-
 
 # Access Control
 st.sidebar.header("Access Control")
@@ -165,17 +158,21 @@ if uploaded_file:
         st.write("### Dataset After Replacing '<' Values")
         st.dataframe(df[columns_with_less_than].head())
 
-        # Imputation using IterativeImputer (only for numerical columns)
-        non_predictive_columns = ['Site No.1', 'Site Num', 'Year', 'Sample Count', 'Period']
-        df_for_imputation = df.drop(columns=non_predictive_columns, errors='ignore')
-        numerical_columns = df_for_imputation.select_dtypes(include=['number']).columns.tolist()
+        # Separate numerical and categorical columns
+        categorical_columns = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_columns = df.select_dtypes(include=['number']).columns.tolist()
 
+        # Exclude non-imputed columns from numerical_columns to avoid imputation errors
+        non_predictive_columns = ['Site No.1', 'Site Num', 'Year', 'Sample Count', 'Period']
+        numerical_columns = [col for col in numerical_columns if col not in non_predictive_columns]
+
+        # Imputation using IterativeImputer (only for numerical columns)
         imputer = IterativeImputer(max_iter=10, random_state=0)
-        imputed_data = imputer.fit_transform(df_for_imputation[numerical_columns])
+        imputed_data = imputer.fit_transform(df[numerical_columns])
         df_imputed = pd.DataFrame(imputed_data, columns=numerical_columns)
 
-        # Reattach non-imputed columns to the imputed dataset
-        df_final = pd.concat([df[non_predictive_columns].reset_index(drop=True), df_imputed], axis=1)
+        # Reattach categorical and non-imputed columns
+        df_final = pd.concat([df[non_predictive_columns + categorical_columns].reset_index(drop=True), df_imputed], axis=1)
 
         # Round numerical columns to 2 decimal places
         for col in numerical_columns:
@@ -184,62 +181,6 @@ if uploaded_file:
         st.write("Step 7: Missing values imputed using Iterative Imputer.")
         st.write("### Dataset After Imputation")
         st.dataframe(df_final.head())
-
-        # Visualize before and after imputation
-        st.header("Column Distribution Before and After Imputation")
-        columns_imputed = [col for col in numerical_columns if col in df.columns and col in df_final.columns]
-        for column in columns_imputed:
-            fig, ax = plt.subplots(figsize=(10, 6))
-            sns.histplot(df[column], color='red', label='Before Imputation', kde=True, bins=30, alpha=0.6, ax=ax)
-            sns.histplot(df_final[column], color='green', label='After Imputation', kde=True, bins=30, alpha=0.6, ax=ax)
-            plt.title(f"Distribution Comparison: {column}")
-            plt.legend()
-            st.pyplot(fig)
-
-        # Kolmogorov-Smirnov Test
-        st.header("Kolmogorov-Smirnov Test Results")
-        ks_results = {}
-        for column in columns_imputed:
-            before = df[column].dropna()
-            after = df_final[column].dropna()
-            ks_stat, p_value = ks_2samp(before, after)
-            ks_results[column] = {'KS Statistic': ks_stat, 'p-value': p_value}
-        ks_results_df = pd.DataFrame(ks_results).T
-        st.write(ks_results_df)
-
-        # Contamination Index
-        native_means = {
-            "As": 6.2, "Cd": 0.375, "Cr": 28.5, "Cu": 23.0, "Ni": 17.95, "Pb": 33.0, "Zn": 94.5
-        }
-
-        for element, mean_value in native_means.items():
-            df_final[f"CI_{element}"] = (df_final[element] / mean_value).round(2)
-
-        ci_columns = [f"CI_{element}" for element in native_means.keys()]
-        df_final["ICI"] = df_final[ci_columns].mean(axis=1).round(2)
-
-        def classify_ici(ici):
-            if ici <= 1:
-                return "Low Contamination"
-            elif 1 < ici <= 3:
-                return "Moderate Contamination"
-            else:
-                return "High Contamination"
-
-        df_final["ICI_Class"] = df_final["ICI"].apply(classify_ici)
-
-        st.write("### Final Dataset with Contamination Index")
-        st.dataframe(df_final)
-
-        # Final validation
-        final_missing = df_final.isnull().sum().sum()
-        final_duplicates = df_final.duplicated().sum()
-        st.write("### Final Dataset Validation")
-        st.write(f"No. of missing values: {final_missing}")
-        st.write(f"No. of duplicate rows: {final_duplicates}")
-
-        if final_missing == 0 and final_duplicates == 0:
-            st.success("Cleaned dataset is ready! No missing values or duplicates remain.")
 
         # File Download
         st.header("Download Cleaned Dataset")
