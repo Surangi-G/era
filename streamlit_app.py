@@ -56,6 +56,7 @@ st.write("""
 Welcome to the Ecosoil Insight AKL Data Cleaning App! 
 This app is designed to clean and prepare soil data, including site metadata, soil quality metrics, and contamination levels. It addresses common issues like missing values, duplicates, and irregularities, ensuring the dataset is accurate and ready for advanced analysis. 
 The app uses the Iterative Imputer method, a machine learning technique that predicts and fills missing values by modeling each numerical column as a function of others. 
+
 **Note:** Currently, this app supports imputation only for numerical columns. Categorical data imputation is not yet supported and must be handled externally. 
 To get started, upload your raw dataset below and follow the guided steps.
 """)
@@ -90,7 +91,7 @@ if uploaded_file:
         st.header("Data Type Conversion")
 
         # Check if 'Site Num' and 'Year' columns are present in the dataset
-        columns_to_convert = ['Site Num', 'Year']
+        columns_to_convert = ['Site Num']
         present_columns = [col for col in columns_to_convert if col in df.columns]
 
         if present_columns:
@@ -197,7 +198,7 @@ if uploaded_file:
         numerical_columns = df.select_dtypes(include=['number']).columns.tolist()
 
         # Imputation using IterativeImputer (only for numerical columns)
-        non_predictive_columns = ['Site Num', 'Year', 'Sample Count']
+        non_predictive_columns = [ 'Year', 'Sample Count']
         df_for_imputation = df.drop(columns=non_predictive_columns, errors='ignore')
         numerical_columns = df_for_imputation.select_dtypes(include=['number']).columns.tolist()
 
