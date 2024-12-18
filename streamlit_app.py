@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import ks_2samp
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 
@@ -56,7 +55,7 @@ This app is designed to clean and prepare soil data, including site metadata, so
 
 The app uses the Iterative Imputer method, a machine learning technique that predicts and fills missing values by modeling each numerical column as a function of others. 
 
-**Note:** Currently, this app supports imputation only for numerical columns. Categorical data imputation is not yet supported and must be handled externally. 
+**Note:** Categorical data will be preserved and reattached to the final dataset. Imputation is performed only on numerical columns.
 
 To get started, upload your raw dataset below and follow the guided steps.
 """)
@@ -116,70 +115,23 @@ if uploaded_file:
                 st.write("### Dataset After Removing Duplicates")
                 st.dataframe(df.head())
 
-        # Extract sample count from 'Site No.1'
-        if 'Site No.1' in df.columns:
-            df['Sample Count'] = df['Site No.1'].str.extract(r'-(\d{2})$').astype(int)
-            st.write("Step 3: Sample count extracted from 'Site No.1'.")
-            st.write("### Dataset After Sample Count Extraction")
-            st.dataframe(df[['Site No.1', 'Sample Count']].head())
-        else:
-            st.warning("Column 'Site No.1' is missing. Sample count extraction skipped.")
-
-        # Add period labels
-        if 'Year' in df.columns:
-            conditions = [
-                (df['Year'] >= 1995) & (df['Year'] <= 2000),
-                (df['Year'] >= 2008) & (df['Year'] <= 2012),
-                (df['Year'] >= 2013) & (df['Year'] <= 2017),
-                (df['Year'] >= 2018) & (df['Year'] <= 2023)
-            ]
-            period_labels = ['1995-2000', '2008-2012', '2013-2017', '2018-2023']
-            df['Period'] = np.select(conditions, period_labels, default='Unknown')
-            st.write("Step 4: Period labels assigned based on 'Year'.")
-            st.write("### Dataset After Period Label Assignment")
-            st.dataframe(df[['Year', 'Period']].head())
-        else:
-            st.warning("Column 'Year' is missing. Period assignment skipped.")
-
-        # Keep latest sample count for each site-period
-        if 'Site Num' in df.columns and 'Period' in df.columns:
-            df = df.loc[df.groupby(['Site Num', 'Period'])['Sample Count'].idxmax()].reset_index(drop=True)
-            st.write("Step 5: Retained latest sample count for each site-period.")
-            st.write("### Dataset After Retaining Latest Samples")
-            st.dataframe(df.head())
-        else:
-            st.warning("Columns 'Site Num' or 'Period' are missing. Filtering latest samples skipped.")
-
-        # Replace '<' values
-        columns_with_less_than = [col for col in df.columns if df[col].astype(str).str.contains('<').any()]
-        for column in columns_with_less_than:
-            df[column] = df[column].apply(lambda x: float(x[1:]) / 2 if isinstance(x, str) and x.startswith('<') else x)
-        st.write(f"Step 6: Replaced '<' values in columns: {columns_with_less_than}")
-        st.write("### Dataset After Replacing '<' Values")
-        st.dataframe(df[columns_with_less_than].head())
-
         # Separate numerical and categorical columns
         categorical_columns = df.select_dtypes(include=['object', 'category']).columns.tolist()
         numerical_columns = df.select_dtypes(include=['number']).columns.tolist()
 
-        # Exclude non-imputed columns from numerical_columns to avoid imputation errors
-        non_predictive_columns = ['Site No.1', 'Site Num', 'Year', 'Sample Count', 'Period']
-        numerical_columns = [col for col in numerical_columns if col not in non_predictive_columns]
-
-        # Imputation using IterativeImputer (only for numerical columns)
+        # Perform imputation on numerical columns
         imputer = IterativeImputer(max_iter=10, random_state=0)
         imputed_data = imputer.fit_transform(df[numerical_columns])
         df_imputed = pd.DataFrame(imputed_data, columns=numerical_columns)
 
-        # Reattach categorical and non-imputed columns
-        df_final = pd.concat([df[non_predictive_columns + categorical_columns].reset_index(drop=True), df_imputed], axis=1)
+        # Reattach categorical columns
+        df_final = pd.concat([df[categorical_columns].reset_index(drop=True), df_imputed], axis=1)
 
         # Round numerical columns to 2 decimal places
         for col in numerical_columns:
             df_final[col] = df_final[col].round(2)
 
-        st.write("Step 7: Missing values imputed using Iterative Imputer.")
-        st.write("### Dataset After Imputation")
+        st.write("### Final Dataset After Imputation and Reattachment")
         st.dataframe(df_final.head())
 
         # File Download
@@ -199,3 +151,4 @@ if uploaded_file:
     except Exception as e:
         st.error(f"An error occurred during the data cleaning process: {e}")
         st.write("Please check your dataset for inconsistencies or missing required columns and try again.")
+
