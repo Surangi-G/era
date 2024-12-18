@@ -77,6 +77,17 @@ if uploaded_file:
         st.write("**Missing Values in Each Column:**")
         st.write(df.isnull().sum())
 
+        # Detailed dataset information: columns, data types, and count of non-null values
+        st.write("**Detailed Dataset Information:**")
+        dataset_info = pd.DataFrame({
+        "Column Name": df.columns,
+        "Data Type": df.dtypes,
+        "Non-Null Count": df.notnull().sum(),
+        "Missing Count": df.isnull().sum()
+        }).reset_index(drop=True)
+
+        st.write(dataset_info)
+
         # Validation: Check for critical columns
         critical_columns = ['pH', 'TC %', 'TN %', 'Olsen P', 'AMN', 'BD']
         st.write("### Critical Columns")
