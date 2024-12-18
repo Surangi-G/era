@@ -8,17 +8,38 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 
 
-# Center-Aligned Logo and Headings
+# Display Auckland Council Logo (center-aligned) and Titles
+st.markdown(
+    """
+    <style>
+        .center-content {
+            text-align: center;
+            margin-top: 10px;
+        }
+        h1 {
+            color: #2c7fb8;
+            font-size: 36px;
+            margin: 10px 0 5px;
+        }
+        h3 {
+            font-size: 24px;
+            margin: 0;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Use st.image to display the logo with HTML alignment
 st.markdown('<div class="center-content">', unsafe_allow_html=True)
 st.image("aucklandcouncil_logo.PNG", width=150)
 st.markdown(
     """
-    <div class="center-content">
-        <img src="aucklandcouncil_logo.PNG" alt="Auckland Council Logo" width="150">
-        <h1>ECO SOIL INSIGHTS AKL</h1>
-        <h3>Data Cleansing App</h3>
-    )
+    <h1>ECO SOIL INSIGHTS AKL</h1>
+    <h3>Data Cleansing App</h3>
+    """,
+    unsafe_allow_html=True
+)
 st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -135,6 +156,10 @@ if uploaded_file:
         st.write(f"Step 6: Replaced '<' values in columns: {columns_with_less_than}")
         st.write("### Dataset After Replacing '<' Values")
         st.dataframe(df[columns_with_less_than].head())
+
+         # Separate numerical and categorical columns
+        categorical_columns = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_columns = df.select_dtypes(include=['number']).columns.tolist()
 
         # Imputation using IterativeImputer (only for numerical columns)
         non_predictive_columns = ['Site Num', 'Year', 'Sample Count']
