@@ -217,11 +217,11 @@ if uploaded_file:
 
         def classify_ici(ici):
             if ici <= 1:
-                return "Low Contamination"
+                return "Low"
             elif 1 < ici <= 3:
-                return "Moderate Contamination"
+                return "Moderate"
             else:
-                return "High Contamination"
+                return "High"
 
         df_final["ICI_Class"] = df_final["ICI"].apply(classify_ici)
 
