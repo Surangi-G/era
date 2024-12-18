@@ -181,14 +181,15 @@ if uploaded_file:
         imputed_data = imputer.fit_transform(df_for_imputation[numerical_columns])
         df_imputed = pd.DataFrame(imputed_data, columns=numerical_columns)
 
+         # Round numerical columns to 2 decimal places
+        for col in numerical_columns:
+            df_imputed[col] = df_imputed[col].round(2)
+
+        
          # Reattach categorical columns
         df_final = pd.concat([df[non_predictive_columns + categorical_columns].reset_index(drop=True), df_imputed], axis=1)
 
         
-        # Round numerical columns to 2 decimal places
-        for col in numerical_columns:
-            df_final[col] = df_final[col].round(2)
-
         st.write("Step 7: Missing values imputed using Iterative Imputer.")
         st.write("### Dataset After Imputation")
         st.dataframe(df_final.head())
