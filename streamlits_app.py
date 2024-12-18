@@ -167,7 +167,7 @@ if uploaded_file:
         st.dataframe(df[columns_with_less_than].head())
 
         # Imputation using IterativeImputer (only for numerical columns)
-        non_predictive_columns = ['Site No.1', 'Site Num', 'Year', 'Sample Count', 'Period']
+        non_predictive_columns = ['Site Num', 'Year', 'Sample Count']
         df_for_imputation = df.drop(columns=non_predictive_columns, errors='ignore')
         numerical_columns = df_for_imputation.select_dtypes(include=['number']).columns.tolist()
 
@@ -175,9 +175,10 @@ if uploaded_file:
         imputed_data = imputer.fit_transform(df_for_imputation[numerical_columns])
         df_imputed = pd.DataFrame(imputed_data, columns=numerical_columns)
 
-        # Reattach non-imputed columns to the imputed dataset
-        df_final = pd.concat([df[non_predictive_columns].reset_index(drop=True), df_imputed], axis=1)
+         # Reattach categorical columns
+        df_final = pd.concat([df[non_predictive_columns + categorical_columns].reset_index(drop=True), df_imputed], axis=1)
 
+        
         # Round numerical columns to 2 decimal places
         for col in numerical_columns:
             df_final[col] = df_final[col].round(2)
