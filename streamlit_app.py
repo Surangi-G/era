@@ -18,12 +18,7 @@ st.markdown(
         <img src="aucklandcouncil_logo.PNG" alt="Auckland Council Logo" width="150">
         <h1>ECO SOIL INSIGHTS AKL</h1>
         <h3>Data Cleansing App</h3>
-    </div>
-    <h1>ECO SOIL INSIGHTS AKL</h1>
-    <h3>Data Cleansing App</h3>
-    """,
-    unsafe_allow_html=True
-)
+    )
 st.markdown('</div>', unsafe_allow_html=True)
 
 
