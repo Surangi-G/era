@@ -83,7 +83,7 @@ if uploaded_file:
         numerical_columns = df.select_dtypes(include=['number']).columns.tolist()
 
         # Step 6: Imputation
-        non_predictive_columns = ['Site No.1', 'Site Num', 'Year', 'Sample Count', 'Period']
+        non_predictive_columns = ['Site Num', 'Year', 'Sample Count', 'Period']
         numerical_columns = [col for col in numerical_columns if col not in non_predictive_columns]
         imputer = IterativeImputer(max_iter=10, random_state=0)
         imputed_data = imputer.fit_transform(df[numerical_columns])
