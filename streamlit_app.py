@@ -178,7 +178,7 @@ if uploaded_file:
 
         # Keep latest sample count for each site-period
         if 'Site Num' in df.columns and 'Period' in df.columns:
-            df = df.loc[df.groupby(['Site Num', 'Period'])['Sample Count'].idxmax()].reset_index(drop=True)
+            df = df.loc[df.groupby(['Site Num', 'Period'], observed=True)['Sample Count'].idxmax()].reset_index(drop=True)
             st.write("Step 5: Retained latest sample count for each site-period.")
             st.write("### Dataset After Retaining Latest Samples")
             st.dataframe(df.head())
