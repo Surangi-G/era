@@ -1,5 +1,4 @@
 import streamlit as st
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,20 +36,7 @@ st.markdown(
 # Center-Aligned Logo and Headings
 # Use st.image to display the logo with HTML alignment
 st.markdown('<div class="center-content">', unsafe_allow_html=True)
-st.image("aucklandcouncil_logo.PNG", width=150)
-st.markdown(
-    """
-    <div class="center-content">
-        <img src="aucklandcouncil_logo.PNG" alt="Auckland Council Logo" width="150">
-        <h1>ECO SOIL INSIGHTS AKL</h1>
-        <h3>Data Cleansing App</h3>
-    </div>
-    <h1>ECO SOIL INSIGHTS AKL</h1>
-    <h3>Data Cleansing App</h3>
-    """,
-    unsafe_allow_html=True
-)
-st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # Access Control
