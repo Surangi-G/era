@@ -212,7 +212,7 @@ if uploaded_file:
 
         
          # Reattach categorical columns
-        df_final = pd.concat([df[non_predictive_columns + categorical_columns].reset_index(drop=True), df_imputed], axis=1)
+        df_final = pd.concat([df[categorical_columns + non_predictive_columns].reset_index(drop=True), df_imputed], axis=1)
 
         
         st.write("Step 7: Missing values imputed using Iterative Imputer.")
