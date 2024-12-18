@@ -58,6 +58,7 @@ This app is designed to clean and prepare soil data, including site metadata, so
 The app uses the Iterative Imputer method, a machine learning technique that predicts and fills missing values by modeling each numerical column as a function of others. 
 
 **Note:** Currently, this app supports imputation only for numerical columns. Categorical data imputation is not yet supported and must be handled externally. 
+
 To get started, upload your raw dataset below and follow the guided steps.
 """)
 
